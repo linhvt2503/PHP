@@ -1,5 +1,13 @@
+<?php
+    require ('admin/inc/db_config.php');
+    require ('admin/inc/essentials.php');
+    $contact_q= "SELECT * FROM `contact_details` WHERE `sr_no`=?"; //Lấy dữ liệu từ bảng contact_details với sr_no=?
+    $values = [1];
+    $contact_r = mysqli_fetch_assoc(select($contact_q,$values,'i')); //Lấy 1 dòng kết quả dạng array
+?>
+
 <!--Header-->
-<nav class="navbar navbar-expand-lg navbar-light bg-white px-lg-3 px-lg-2 shadow-sm ssticky-top">
+<nav id="nav-bar" class="navbar navbar-expand-lg navbar-light bg-white px-lg-3 px-lg-2 shadow-sm ssticky-top">
   <div class="container-fluid">
     <a class="navbar-brand mx-2 fw-bold fs-3 h-font" href="index.php">HOTEL</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -8,13 +16,16 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active mx-2" aria-current="page" href="index.php">Home</a>
+          <a class="nav-link mx-2" href="index.php">Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link mx-2" href="rooms.php">Rooms</a>
         </li>
         <li class="nav-item">
           <a class="nav-link mx-2" href="facilities.php">Facilities</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="contact.php">Contact us</a>
         </li>
         <li class="nav-item">
           <a class="nav-link mx-2" href="about.php">About</a>
@@ -95,7 +106,10 @@
               <label classs="form-label">Phone Number</label>
               <input type="number" class="form-control shadow-none">
             </div>
-
+            <div class="col-lg-5 col-md-6 p-0">
+              <label classs="form-label">Picture</label>
+              <input type="file" class="form-control shadow-none">
+            </div>
           </div>
           <div class="row">
             <div class="col-lg-12 col-md-6 ps-0 mb-3">

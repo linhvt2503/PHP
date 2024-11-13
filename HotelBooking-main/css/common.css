@@ -27,3 +27,9 @@ html{
     margin: 0 auto;
     height: 1.7 px;
 }
+
+.custom-alert{
+    position: fixed;
+    top: 80px;
+    right: 25px;
+}

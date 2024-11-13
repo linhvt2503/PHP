@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 12, 2024 at 06:20 AM
+-- Generation Time: Nov 09, 2024 at 11:06 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -30,17 +30,15 @@ SET time_zone = "+00:00";
 CREATE TABLE `admin_cred` (
   `sr_no` int(11) NOT NULL,
   `admin_name` varchar(150) NOT NULL,
-  `admin_pass` varchar(150) NOT NULL,
-  `c_vu` varchar(50) NOT NULL
+  `admin_pass` varchar(150) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `admin_cred`
 --
 
-INSERT INTO `admin_cred` (`sr_no`, `admin_name`, `admin_pass`, `c_vu`) VALUES
-(1, 'admin', '123', 'giám đốc'),
-(2, 'bao', '123', 'nhân viên');
+INSERT INTO `admin_cred` (`sr_no`, `admin_name`, `admin_pass`) VALUES
+(1, 'admin', '123');
 
 -- --------------------------------------------------------
 
@@ -243,6 +241,26 @@ INSERT INTO `room_images` (`sr_no`, `room_id`, `image`, `thumb`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `settings`
+--
+
+CREATE TABLE `settings` (
+  `sr_no` int(11) NOT NULL,
+  `site_title` varchar(50) NOT NULL,
+  `site_about` varchar(250) NOT NULL,
+  `shutdown` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `settings`
+--
+
+INSERT INTO `settings` (`sr_no`, `site_title`, `site_about`, `shutdown`) VALUES
+(1, '', '', 0);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `team_details`
 --
 
@@ -349,6 +367,12 @@ ALTER TABLE `room_images`
   ADD KEY `room_id` (`room_id`);
 
 --
+-- Indexes for table `settings`
+--
+ALTER TABLE `settings`
+  ADD PRIMARY KEY (`sr_no`);
+
+--
 -- Indexes for table `team_details`
 --
 ALTER TABLE `team_details`
@@ -368,7 +392,7 @@ ALTER TABLE `user_queries`
 -- AUTO_INCREMENT for table `admin_cred`
 --
 ALTER TABLE `admin_cred`
-  MODIFY `sr_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `sr_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `carousel`
@@ -417,6 +441,12 @@ ALTER TABLE `room_features`
 --
 ALTER TABLE `room_images`
   MODIFY `sr_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `settings`
+--
+ALTER TABLE `settings`
+  MODIFY `sr_no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `team_details`

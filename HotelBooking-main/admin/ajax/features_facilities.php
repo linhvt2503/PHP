@@ -4,12 +4,13 @@ require('../inc/essentials.php');
 adminLogin();
 
 // Thêm tính năng
-if(isset($_POST['add_feature'])) {
+if (isset($_POST['add_feature'])) {
     error_log("Dữ liệu POST nhận được: " . print_r($_POST, true));
     $frm_data = filteration($_POST);
     error_log("Dữ liệu đã lọc: " . print_r($frm_data, true));
 
-    $q = "INSERT INTO 'd_trung'('ten') VALUES (?)";
+    // Sửa dấu nháy đơn xung quanh tên bảng và cột
+    $q = "INSERT INTO d_trung (ten) VALUES (?)";
     $values = [$frm_data['name']];
     error_log("Truy vấn: " . $q);
     error_log("Giá trị: " . print_r($values, true));
@@ -20,20 +21,20 @@ if(isset($_POST['add_feature'])) {
 }
 
 // Lấy danh sách tính năng
-if(isset($_POST['get_features'])){
+if (isset($_POST['get_features'])) {
     $res = selectAll('d_trung');
-    $i=1;
+    $i = 1;
 
-    while ($row = mysqli_fetch_assoc($res)){
+    while ($row = mysqli_fetch_assoc($res)) {
         echo <<<data
                 <tr>
                     <td>$i</td>
                     <td>$row[ten]</td>
-                     <td>
+                    <td>
                         <button type="button" onclick="rem_feature($row[id])" class="btn btn-danger btn-sm shadow-none">
-                                <i class="bi bi-trash"></i>
+                            <i class="bi bi-trash"></i>
                         </button>
-                     </td>
+                    </td>
                 </tr>
             data;
         $i++;
@@ -41,17 +42,18 @@ if(isset($_POST['get_features'])){
 }
 
 // Xóa tính năng
-if(isset($_POST['rem_feature'])){
+if (isset($_POST['rem_feature'])) {
     $frm_data = filteration($_POST);
     $values = [$frm_data['rem_feature']];
 
-    $q = "DELETE FROM 'd_trung' WHERE 'id'=?";
+    // Sửa dấu nháy đơn xung quanh tên bảng và cột
+    $q = "DELETE FROM d_trung WHERE id=?";
     $res = delete($q, $values, 'i');
     echo $res;
 }
 
 // Thêm tiện ích
-if(isset($_POST['add_facility'])) {
+if (isset($_POST['add_facility'])) {
     error_log("Dữ liệu POST nhận được cho tiện ích: " . print_r($_POST, true));
     error_log("Dữ liệu FILES nhận được: " . print_r($_FILES, true));
 
@@ -60,17 +62,15 @@ if(isset($_POST['add_facility'])) {
     $img_r = uploadSVGImage($_FILES['icon'], FACILITIES_FOLDER);
     error_log("Kết quả tải lên ảnh: " . $img_r);
 
-    if($img_r == 'inv_img') {
+    if ($img_r == 'inv_img') {
         echo 'inv_img';
-    }
-    else if($img_r == 'inv_size') {
+    } else if ($img_r == 'inv_size') {
         echo 'inv_size';
-    }
-    else if($img_r == 'upd_failed') {
+    } else if ($img_r == 'upd_failed') {
         echo 'upd_failed';
-    }
-    else {
-        $q = "INSERT INTO 'tien_ich'('icon', 'ten', 'mo_ta') VALUES (?,?,?)";
+    } else {
+        // Sửa dấu nháy đơn xung quanh tên bảng và cột
+        $q = "INSERT INTO tien_ich (icon, ten, mo_ta) VALUES (?, ?, ?)";
         $values = [$img_r, $frm_data['name'], $frm_data['desc']];
 
         error_log("Truy vấn SQL: " . $q);
@@ -88,12 +88,12 @@ if(isset($_POST['add_facility'])) {
 }
 
 // Lấy danh sách tiện ích
-if(isset($_POST['get_facilities'])) {
+if (isset($_POST['get_facilities'])) {
     $res = selectAll('tien_ich');
-    $i=1;
+    $i = 1;
     $path = FACILITIES_IMG_PATH;
 
-    while ($row = mysqli_fetch_assoc($res)){
+    while ($row = mysqli_fetch_assoc($res)) {
         echo <<<data
                 <tr class="align-middle">
                     <td>$i</td>
@@ -112,20 +112,20 @@ if(isset($_POST['get_facilities'])) {
 }
 
 // Xóa tiện ích
-if(isset($_POST['rem_facility'])){
+if (isset($_POST['rem_facility'])) {
     $frm_data = filteration($_POST);
     $values = [$frm_data['rem_facility']];
 
-    $pre_q = "SELECT * FROM 'tien_ich' WHERE 'id'=?";
+    // Sửa dấu nháy đơn xung quanh tên bảng và cột
+    $pre_q = "SELECT * FROM tien_ich WHERE id=?";
     $res = select($pre_q, $values, 'i');
     $img = mysqli_fetch_assoc($res);
 
-    if(deleteImage($img['icon'], FACILITIES_FOLDER)){
-        $q = "DELETE FROM 'tien_ich' WHERE 'id'=?";
+    if (deleteImage($img['icon'], FACILITIES_FOLDER)) {
+        $q = "DELETE FROM tien_ich WHERE id=?";
         $res = delete($q, $values, 'i');
         echo $res;
-    }
-    else{
+    } else {
         echo 0;
     }
 }

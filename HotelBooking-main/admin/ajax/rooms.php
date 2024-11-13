@@ -301,7 +301,7 @@ if(isset($_POST['add_image'])){
 if(isset($_POST['get_room_images'])){
 
     $frm_data = filteration($_POST);
-    $res = select("SELECT * FROM 'phong_image' WHERE 'phong_id'=?",[$frm_data['get_room_images']],'i');
+    $res = select("SELECT * FROM phong_image WHERE phong_id=?", [$frm_data['get_room_images']], 'i');
 
     $path = ROOMS_IMG_PATH;
 
@@ -431,5 +431,6 @@ if(isset($_POST['remove_room']))
         echo 0; // Trả về 0 để thông báo xóa thất bại
     }
 }
+
 ?>
 

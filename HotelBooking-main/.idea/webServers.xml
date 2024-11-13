@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="9b80f84f-5ead-4068-9afa-4d3c64c8ff81" name="hotel-xspiprt1" url="http://localhost/HotelBooking-main/">
+        <fileTransfer accessType="LOCAL" port="0" />
+      </webServer>
+      <webServer id="4e75efd4-f9e8-41ee-a77d-8cdded06600d" name="hotel-xspiprt2" url="http://localhost/phpmyadmin/">
+        <fileTransfer accessType="LOCAL" port="0" />
+      </webServer>
+    </option>
+  </component>
+</project>

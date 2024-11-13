@@ -1,0 +1,29 @@
+
+:root{
+    --teal: #2ec1ac;
+    --teal_hover: #279e8c;
+}
+html{
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.h-font {
+    font-family: "Roboto", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+}
+.custom-bg{
+  background-color: var(--teal);
+  border-color: 1px solid var(--teal);
+}
+.custom-bg:hover{
+  background-color: var(--teal_hover);
+  border-color: var(--teal_hover);
+}
+.h-line{
+    width: 150px;
+    margin: 0 auto;
+    height: 1.7 px;
+}

@@ -24,28 +24,32 @@
 <body class="bg-light">
     <!--Header-->
     <?php require ('inc/header.php'); ?>
-    <?php
-        $contact_q= "SELECT * FROM `contact_details` WHERE `sr_no`=?"; //Lấy dữ liệu từ bảng contact_details với sr_no=?
-        $values = [1];
-        $contact_r = mysqli_fetch_assoc(select($contact_q,$values,'i')); //Lấy 1 dòng kết quả dạng array
-    ?>
+
 <!-- Carousel -->
+ <!-- Swiper -->
 <div class="contrainer-fluid px-lg-4 mt-4">
   <div class="swiper swiper-container">
     <div class="swiper-wrapper">
-        <?php
-            $res = selectAll('carousel');
-            while ($row = mysqli_fetch_assoc($res)){
-                $path = CAROUSEL_IMG_PATH;
-                echo <<<data
-                    <div class="swiper-slide">
-                        <img src="$path$row[image] " class="w-100 d-block">
-                    </div>
-                data;
-            }
-        ?>
-    </div>
+      <div class="swiper-slide">
+        <img src="images/carousel/1.png" class="w-100 d-block" />
+      </div>
+      <div class="swiper-slide">
+          <img src="images/carousel/2.png" class="w-100 d-block"/>
+      </div>
+      <div class="swiper-slide">
+          <img src="images/carousel/3.png" class="w-100 d-block"/>
+      </div>
+      <div class="swiper-slide">
+          <img src="images/carousel/4.png" class="w-100 d-block"/>
+      </div>
+      <div class="swiper-slide">
+          <img src="images/carousel/5.png" class="w-100 d-block"/>
+      </div>
+      <div class="swiper-slide">
+          <img src="images/carousel/6.png" class="w-100 d-block"/>
+      </div>
   </div>
+
 </div>
 
     <!-- Form Check Booking -->
@@ -88,13 +92,12 @@
     </div>
   </div>
 
-
     <!-- OUR Rooms -->
     <h2 class="mt-5 pt-4 mb-4 text-center fw-bold h-font">Phòng</h2>
     <div class="container">
     <div class="row">
       <!-- Room 1 -->
-        <div class="col-lg-4 col-md-6 my-3">
+      <div class="col-lg-4 col-md-6 my-3">
         <div class="card border-0 shadow " style="max-width: 350px; margin: auto;">
           <img src="images/rooms/1.jpg" class="card-img-top">
           <div class="card-body">
@@ -110,7 +113,9 @@
                 </span>
                 <span class="badge rounded-pill bg-light text-dark text-wrap ">
                   1 Living Room
-
+                </span><span class="badge rounded-pill bg-light text-dark text-wrap ">
+                  2 Con ghẹ đít bự
+                </span>
             </div>
             <div class="facilites mb-4">
               <h6 class="mb-1">Cơ sở vật chất</h6>
@@ -122,7 +127,9 @@
               </span>
               <span class="badge rounded-pill bg-light text-dark text-wrap ">
                 1 Infinity Pool
-
+              </span><span class="badge rounded-pill bg-light text-dark text-wrap ">
+                Ghế tình yêu
+              </span>
             </div>
             <div class="guests mb-4">
                   <h6 class="mb-1">Số lượng khách</h6>
@@ -151,120 +158,136 @@
         </div>
       </div>
       <!-- Room 2 -->
-        <div class="col-lg-4 col-md-6 my-3">
-            <div class="card border-0 shadow " style="max-width: 350px; margin: auto;">
-                <img src="images/rooms/1.jpg" class="card-img-top">
-                <div class="card-body">
-                    <h5 >Phòng Đơn</h5>
-                    <h6 class="mb-4">2tr999 VND/ngày</h6>
-                    <div class="features mb-4">
-                        <h6 class="mb-1">Mô tả</h6>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
+      <div class="col-lg-4 col-md-6 my-3">
+        <div class="card border-0 shadow " style="max-width: 350px; margin: auto;">
+          <img src="images/rooms/1.jpg" class="card-img-top">
+          <div class="card-body">
+            <h5 >Phòng Đơn</h5>
+            <h6 class="mb-4">2tr999 VND/ngày</h6>
+            <div class="features mb-4">
+                <h6 class="mb-1">Mô tả</h6>
+                <span class="badge rounded-pill bg-light text-dark text-wrap ">
                   2 Rooms
                 </span>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
+                <span class="badge rounded-pill bg-light text-dark text-wrap ">
                   2 Bathrooms
                 </span>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
+                <span class="badge rounded-pill bg-light text-dark text-wrap ">
                   1 Living Room
-
-                    </div>
-                    <div class="facilites mb-4">
-                        <h6 class="mb-1">Cơ sở vật chất</h6>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
+                </span><span class="badge rounded-pill bg-light text-dark text-wrap ">
+                  2 Con ghẹ đít bự
+                </span>
+            </div>
+            <div class="facilites mb-4">
+              <h6 class="mb-1">Cơ sở vật chất</h6>
+              <span class="badge rounded-pill bg-light text-dark text-wrap ">
                 Wifi 5G
               </span>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
+              <span class="badge rounded-pill bg-light text-dark text-wrap ">
                 2 TV
               </span>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
+              <span class="badge rounded-pill bg-light text-dark text-wrap ">
                 1 Infinity Pool
-
-                    </div>
-                    <div class="guests mb-4">
-                        <h6 class="mb-1">Số lượng khách</h6>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
+              </span><span class="badge rounded-pill bg-light text-dark text-wrap ">
+                Ghế tình yêu
+              </span>
+            </div>
+              <div class="guests mb-4">
+                  <h6 class="mb-1">Số lượng khách</h6>
+                  <span class="badge rounded-pill bg-light text-dark text-wrap ">
                 5 người lớn
               </span>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
+                  <span class="badge rounded-pill bg-light text-dark text-wrap ">
                 4 trẻ em
               </span>
-                    </div>
-                    <div class="rating mb-4">
-                        <h6 class="mb-1">Đánh giá</h6>
-                        <span class="badge rounded-pill bg-light">
+              </div>
+            <div class="rating mb-4">
+              <h6 class="mb-1">Đánh giá</h6>
+              <span class="badge rounded-pill bg-light">
                 <i class="bi bi-star-fill text-warning"></i>
                 <i class="bi bi-star-fill text-warning"></i>
                 <i class="bi bi-star-fill text-warning"></i>
                 <i class="bi bi-star-fill text-warning"></i>
                 <i class="bi bi-star-fill text-warning"></i>
-              </span>
-                    </div>
-                    <div class="d-flex justify-content-evenly mb-2">
-                        <a href="#" class="btn btn-sm text-white custom-bg shadow-none">Đặt phòng</a>
-                        <a href="#" class="btn btn-sm btn-outline-dark shadow-none">Thêm chi tiết</a>
-                    </div>
-                </div>
+              </span> 
             </div>
+            <div class="d-flex justify-content-evenly mb-2">
+              <a href="#" class="btn btn-sm text-white custom-bg shadow-none">Đặt phòng</a>
+              <a href="#" class="btn btn-sm btn-outline-dark shadow-none">Thêm chi tiết</a>
+            </div>
+          </div>
         </div>
+      </div>
       <!-- Room 3 -->
-        <div class="col-lg-4 col-md-6 my-3">
-            <div class="card border-0 shadow " style="max-width: 350px; margin: auto;">
-                <img src="images/rooms/1.jpg" class="card-img-top">
-                <div class="card-body">
-                    <h5 >Phòng Đơn</h5>
-                    <h6 class="mb-4">2tr999 VND/ngày</h6>
-                    <div class="features mb-4">
-                        <h6 class="mb-1">Mô tả</h6>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
+      <div class="col-lg-4 col-md-6 my-3">
+        <div class="card border-0 shadow " style="max-width: 350px; margin: auto;">
+          <img src="images/rooms/1.jpg" class="card-img-top">
+          <div class="card-body">
+            <h5 >Phòng Đơn</h5>
+            <h6 class="mb-4">2tr999 VND/ngày</h6>
+            <div class="features mb-4">
+                <h6 class="mb-1">Mô tả</h6>
+                <span class="badge rounded-pill bg-light text-dark text-wrap ">
                   2 Rooms
                 </span>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
+                <span class="badge rounded-pill bg-light text-dark text-wrap ">
                   2 Bathrooms
                 </span>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
+                <span class="badge rounded-pill bg-light text-dark text-wrap ">
                   1 Living Room
-
-                    </div>
-                    <div class="facilites mb-4">
-                        <h6 class="mb-1">Cơ sở vật chất</h6>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
-                Wifi 5G
-              </span>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
-                2 TV
-              </span>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
-                1 Infinity Pool
-
-                    </div>
-                    <div class="guests mb-4">
-                        <h6 class="mb-1">Số lượng khách</h6>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
+                </span><span class="badge rounded-pill bg-light text-dark text-wrap ">
+                  2 Con ghẹ đít bự
+                </span>
+            </div>
+              <div class="guests mb-4">
+                  <h6 class="mb-1">Cơ sở vật chất</h6>
+                  <span class="badge rounded-pill bg-light text-dark text-wrap ">
                 5 người lớn
               </span>
-                        <span class="badge rounded-pill bg-light text-dark text-wrap ">
+                  <span class="badge rounded-pill bg-light text-dark text-wrap ">
                 4 trẻ em
               </span>
-                    </div>
-                    <div class="rating mb-4">
-                        <h6 class="mb-1">Đánh giá</h6>
-                        <span class="badge rounded-pill bg-light">
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
-                <i class="bi bi-star-fill text-warning"></i>
+              </div>
+            <div class="facilites mb-4">
+              <h6 class="mb-1">Cơ sở vật chất</h6>
+              <span class="badge rounded-pill bg-light text-dark text-wrap ">
+                Wifi 5G
               </span>
-                    </div>
-                    <div class="d-flex justify-content-evenly mb-2">
-                        <a href="#" class="btn btn-sm text-white custom-bg shadow-none">Đặt phòng</a>
-                        <a href="#" class="btn btn-sm btn-outline-dark shadow-none">Thêm chi tiết</a>
-                    </div>
-                </div>
+              <span class="badge rounded-pill bg-light text-dark text-wrap ">
+                2 TV
+              </span>
+              <span class="badge rounded-pill bg-light text-dark text-wrap ">
+                1 Infinity Pool
+              </span><span class="badge rounded-pill bg-light text-dark text-wrap ">
+                Ghế tình yêu
+              </span>
             </div>
+              <div class="guests mb-4">
+                  <h6 class="mb-1">Số lượng khách</h6>
+                  <span class="badge rounded-pill bg-light text-dark text-wrap ">
+                5 người lớn
+              </span>
+                  <span class="badge rounded-pill bg-light text-dark text-wrap ">
+                4 trẻ em
+              </span>
+              </div>
+            <div class="rating mb-4">
+              <h6 class="mb-1">Đánh giá</h6>
+              <span class="badge rounded-pill bg-light">
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star-fill text-warning"></i>
+                <i class="bi bi-star-fill text-warning"></i>
+              </span> 
+            </div>
+            <div class="d-flex justify-content-evenly mb-2">
+              <a href="#" class="btn btn-sm text-white custom-bg shadow-none">Đặt phòng</a>
+              <a href="#" class="btn btn-sm btn-outline-dark shadow-none">Thêm chi tiết</a>
+            </div>
+          </div>
         </div>
-
+      </div>
       <div class="col-lg-12 text-center mt-5">
         <a href="#" class="btn btn-sm btn-outline-dark rounded-0 fw-bold shadow-none">More Rooms >>></a>
       </div>
@@ -370,50 +393,36 @@
         <div class="row">
             <!-- Map -->
             <div class="col-lg-8 col-md-8 p-4 mb-lg-0 mb-3 bg-white rounded">
-                <iframe class="w-100" height="320px" src="<?php echo $contact_r['iframe'] ?>""></iframe>
+                <iframe class="w-100" height="320px" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d28229.831991927833!2d109.25586900000002!3d12.22304!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317066e1dd9688bb%3A0x6ae039c3dfc181db!2sVinpearl%20Resort%20Nha%20Trang!5e1!3m2!1svi!2sus!4v1730539444657!5m2!1svi!2sus""></iframe>
             </div>
             <div class="col-lg-4 col-md-4">
                 <!-- Phone Number -->
                 <div class="bg-white p-4 rounded mb-4">
                     <h5>Hotline</h5>
-                    <a href="tel: + <?php echo $contact_r['pn1'] ?>" class="d-inline-block mb-2 text-decoration-none text-dark">
-                        <i class="bi bi-telephone-fill"></i> + <?php echo $contact_r['pn1'] ?>
+                    <a href="tel: +849057768899" class="d-inline-block mb-2 text-decoration-none text-dark">
+                        <i class="bi bi-telephone-fill"></i>+84 9057768899
                     </a>
                     <br>
-                    <?php
-                    // Kiểm tra nếu số điện thoại 2 không rỗng thì hiển thị link và icon gọi điện
-                        if($contact_r['pn2']!=''){
-                            echo <<< data
-                                <a href="tel: + $contact_r[pn2]" class="d-inline-block mb-2 text-decoration-none text-dark">
-                                    <i class="bi bi-telephone-fill"></i> + $contact_r[pn2]
-                                </a>
-                            data;
-                        }
-                    ?>
+                    <a href="tel: +849057768899" class="d-inline-block mb-2 text-decoration-none text-dark">
+                        <i class="bi bi-telephone-fill"></i> +84 8567842167
+                    </a>
                 </div>
                 <!-- Platform -->
                 <div class="bg-white p-4 rounded mb-4">
                     <h5>Follow us</h5>
-                    <?php
-                        if($contact_r['tw']!=''){
-                            echo <<< data
-                            <a href="$contact_r[tw]" class="d-inline-block mb-3">
-                                <span class="badge bg-light text-dark fs-6 p-2">
-                                <i class="bi bi-twitter-x"></i> Twitter
-                                </span>
-                            </a>
-                            <br>
-                            data;
-                        }
-                    ?>
-
-                    <a href="<?php echo $contact_r['fb']?>" class="d-inline-block mb-3">
+                    <a href="#" class="d-inline-block mb-3">
+                        <span class="badge bg-light text-dark fs-6 p-2">
+                            <i class="bi bi-twitter-x"></i> Twitter
+                        </span>
+                    </a>
+                    <br>
+                    <a href="#" class="d-inline-block mb-3">
                         <span class="badge bg-light text-dark fs-6 p-2">
                             <i class="bi bi-facebook"></i> Facebook
                         </span>
                     </a>
                     <br>
-                    <a href="<?php echo $contact_r['insta']?>" class="d-inline-block mb-3">
+                    <a href="#" class="d-inline-block mb-3">
                         <span class="badge bg-light text-dark fs-6 p-2">
                             <i class="bi bi-instagram"></i> Instagram
                         </span>

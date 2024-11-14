@@ -29,64 +29,115 @@
         }
         return $res;
     }
-    function select($sql,$values,$datatypes){
-        $con =$GLOBALS['con'];
-        if($stmt = mysqli_prepare($con,$sql)){
-            mysqli_stmt_bind_param($stmt, $datatypes,...$values);
-            if(mysqli_stmt_execute($stmt)){
-                $res = mysqli_stmt_get_result($stmt);
-                mysqli_stmt_close($stmt);
-                return $res;
-            }
-            else{
-                mysqli_stmt_close($stmt);
-                die("Query cannot be executed -Select");
-            }
+    function select($sql, $values, $datatypes) {
+    $con = $GLOBALS['con'];
 
-        }
-        else{
-            die("Query cannot be prepared -Select");
+    if (!$con) {
+        error_log("Database connection failed");
+        return false;
+    }
+
+    $stmt = mysqli_prepare($con, $sql);
+    if (!$stmt) {
+        error_log("Prepare failed: " . mysqli_error($con));
+        return false;
+    }
+
+    if (!empty($values)) {
+        try {
+            mysqli_stmt_bind_param($stmt, $datatypes, ...$values);
+        } catch (Exception $e) {
+            error_log("Bind param failed: " . $e->getMessage());
+            mysqli_stmt_close($stmt);
+            return false;
         }
     }
 
-    function update($sql,$values,$datatypes){
-        $con =$GLOBALS['con'];
-        if($stmt = mysqli_prepare($con,$sql)){
-            mysqli_stmt_bind_param($stmt, $datatypes,...$values);
-            if(mysqli_stmt_execute($stmt)){
-                $res = mysqli_stmt_affected_rows($stmt);
-                mysqli_stmt_close($stmt);
-                return $res;
-            }
-            else{
-                mysqli_stmt_close($stmt);
-                die("Query cannot be executed -Update");
-            }
+    if (!mysqli_stmt_execute($stmt)) {
+        error_log("Execute failed: " . mysqli_stmt_error($stmt));
+        mysqli_stmt_close($stmt);
+        return false;
+    }
 
-        }
-        else{
-            die("Query cannot be prepared -Update");
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_stmt_close($stmt);
+
+    return $result;
+}
+
+    function update($sql, $values, $datatypes) {
+    $con = $GLOBALS['con'];
+
+    if (!$con) {
+        error_log("Database connection failed");
+        return false;
+    }
+
+    $stmt = mysqli_prepare($con, $sql);
+    if (!$stmt) {
+        error_log("Prepare failed: " . mysqli_error($con));
+        return false;
+    }
+
+    if (!empty($values)) {
+        try {
+            mysqli_stmt_bind_param($stmt, $datatypes, ...$values);
+        } catch (Exception $e) {
+            error_log("Bind param failed: " . $e->getMessage());
+            mysqli_stmt_close($stmt);
+            return false;
         }
     }
 
-    function insert($sql,$values,$datatypes) {
-        $con = $GLOBALS['con'];
-        if($stmt = mysqli_prepare($con,$sql)) {
-            mysqli_stmt_bind_param($stmt, $datatypes,...$values);
-            if(mysqli_stmt_execute($stmt)) {
-                $res = mysqli_stmt_affected_rows($stmt);
-                mysqli_stmt_close($stmt);
-                return $res;
-            } else {
-                error_log("MySQL Error: " . mysqli_stmt_error($stmt));
-                mysqli_stmt_close($stmt);
-                return "Query cannot be executed - Insert: " . mysqli_stmt_error($stmt);
-            }
-        } else {
-            error_log("MySQL Prepare Error: " . mysqli_error($con));
-            return "Query cannot be prepared - Insert: " . mysqli_error($con);
-        }
+    if (!mysqli_stmt_execute($stmt)) {
+        error_log("Execute failed: " . mysqli_stmt_error($stmt));
+        mysqli_stmt_close($stmt);
+        return false;
     }
+
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_stmt_close($stmt);
+
+    return $result;
+}
+
+    function insert($sql, $values, $datatypes) {
+    $con = $GLOBALS['con'];
+
+    // Kiểm tra kết nối
+    if (!$con) {
+        error_log("Database connection failed");
+        return false;
+    }
+
+    // Chuẩn bị statement
+    $stmt = mysqli_prepare($con, $sql);
+    if (!$stmt) {
+        error_log("Prepare failed: " . mysqli_error($con));
+        return false;
+    }
+
+    // Bind parameters
+    try {
+        mysqli_stmt_bind_param($stmt, $datatypes, ...$values);
+    } catch (Exception $e) {
+        error_log("Bind param failed: " . $e->getMessage());
+        mysqli_stmt_close($stmt);
+        return false;
+    }
+
+    // Thực thi query
+    if (!mysqli_stmt_execute($stmt)) {
+        error_log("Execute failed: " . mysqli_stmt_error($stmt));
+        mysqli_stmt_close($stmt);
+        return false;
+    }
+
+    $affected_rows = mysqli_stmt_affected_rows($stmt);
+    mysqli_stmt_close($stmt);
+
+    return $affected_rows;
+}
 
     function delete($sql,$values,$datatypes){
     $con =$GLOBALS['con'];

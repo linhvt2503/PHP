@@ -26,16 +26,16 @@ if (isset($_POST['action']) && $_POST['action'] == 'add_room') {
         // Begin transaction
         mysqli_begin_transaction($GLOBALS['con']);
 
-        $q1 = "INSERT INTO `rooms`(`name`, `area`, `price`, `quantity`, `adult`, `children`, `description`) 
+        $q1 = "INSERT INTO 'phong'('name', 'area', 'price', 'soluong', 'adult', 'children', 'mo_ta') 
                VALUES (?,?,?,?,?,?,?)";
         $values = [
             $frm_data['name'],
             $frm_data['area'],
             $frm_data['price'],
-            $frm_data['quantity'],
+            $frm_data['soluong'],
             $frm_data['adult'],
             $frm_data['children'],
-            $frm_data['desc']
+            $frm_data['mo_ta']
         ];
 
         if (!insert($q1, $values, 'siiiiis')) {
@@ -46,7 +46,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'add_room') {
 
         // Insert facilities
         if (!empty($facilities)) {
-            $q2 = "INSERT INTO `room_facilities` (`room_id`, `facilities_id`) VALUES (?,?)";
+            $q2 = "INSERT INTO 'phong_d_trung' ('phong_id', 'd_trung_id') VALUES (?,?)";
             $stmt2 = mysqli_prepare($GLOBALS['con'], $q2);
 
             if (!$stmt2) {
@@ -64,7 +64,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'add_room') {
 
         // Insert features
         if (!empty($features)) {
-            $q3 = "INSERT INTO `room_features` (`room_id`, `features_id`) VALUES (?,?)";
+            $q3 = "INSERT INTO 'phong_d_trung' ('phong_id', 'd_trung_id') VALUES (?,?)";
             $stmt3 = mysqli_prepare($GLOBALS['con'], $q3);
 
             if (!$stmt3) {
@@ -94,12 +94,12 @@ if (isset($_POST['action']) && $_POST['action'] == 'add_room') {
 }
 
 if (isset($_POST['get_all_rooms'])) {
-    $res = selectAll('rooms');
+    $res = selectAll('phong');
     $i = 1;
     $data = "";
 
     while ($row = mysqli_fetch_assoc($res)) {
-        if($row['status']==1){
+        if(isset($row['status'])&&$row['status']==1){
             $status = "<button onclick='toggle_status($row[id],0)' class='btn btn-dark btn-sm shadow-none'>active</button>";
         }
         else{
@@ -120,7 +120,7 @@ if (isset($_POST['get_all_rooms'])) {
                     </span>
                 </td>
                 <td>$row[price] VND</td>
-                <td>$row[quantity]</td>
+                <td>$row[soluong]</td>
                 <td>$status</td>
                 <td>
                     <button type='button' onclick='edit_details($row[id])' class='btn btn-primary shadow-none btn-sm' data-bs-toggle='modal' data-bs-target='#edit-room'>
@@ -144,9 +144,9 @@ if (isset($_POST['get_all_rooms'])) {
 if(isset($_POST['get_room']))
 {
     $frm_data = filteration($_POST);
-    $res1 = select("SELECT * FROM `rooms` WHERE `id`=?",[$frm_data['get_room']],'i');
-    $res2 = select("SELECT * FROM `room_features` WHERE `room_id`=?",[$frm_data['get_room']],'i');
-    $res3 = select("SELECT * FROM `room_facilities` WHERE `room_id`=?",[$frm_data['get_room']],'i');
+    $res1 = select("SELECT * FROM 'phong' WHERE `id`=?",[$frm_data['get_room']],'i');
+    $res2 = select("SELECT * FROM 'phong_d_trung' WHERE `room_id`=?",[$frm_data['get_room']],'i');
+    $res3 = select("SELECT * FROM 'phong_tien_ich' WHERE `room_id`=?",[$frm_data['get_room']],'i');
 
     $roomdata = mysqli_fetch_assoc($res1);
     $features = [];
@@ -154,17 +154,17 @@ if(isset($_POST['get_room']))
 
     if(mysqli_num_rows($res2)>0){
         while($row = mysqli_fetch_assoc($res2)){
-            array_push($features,$row['features_id']);
+            array_push($features,$row['d_trung_id']);
         }
     }
 
     if(mysqli_num_rows($res3)>0){
         while($row = mysqli_fetch_assoc($res3)){
-            array_push($facilities,$row['facilities_id']);
+            array_push($facilities,$row['d_trung_id']);
         }
     }
 
-    $data = ["room" => $roomdata, "features" => $features, "facilities" => $facilities];
+    $data = ["phong" => $roomdata, "d_trung" => $features, "tien_ich" => $facilities];
 
     echo json_encode($data);
 }
@@ -185,18 +185,18 @@ if(isset($_POST['action']) && $_POST['action']=='edit_room')
         // Start transaction
         mysqli_begin_transaction($GLOBALS['con']);
 
-        $q1 = "UPDATE `rooms` SET `name`=?,`area`=?,`price`=?,`quantity`=?,
-            `adult`=?,`children`=?,`description`=? WHERE `id`=?";
+        $q1 = "UPDATE 'phong' SET 'name'=?,'area'=?,'price'=?,'soluong'=?,
+            'adult'=?,'children'=?,'mo_ta'=? WHERE 'id'=?";
 
         $values = [
             $frm_data['name'],
             $frm_data['area'],
             $frm_data['price'],
-            $frm_data['quantity'],
+            $frm_data['soluong'],
             $frm_data['adult'],
             $frm_data['children'],
-            $frm_data['desc'],
-            $frm_data['room_id']
+            $frm_data['mo_ta'],
+            $frm_data['phong_id']
         ];
 
         if(!update($q1,$values,'siiiiisi')){
@@ -205,8 +205,8 @@ if(isset($_POST['action']) && $_POST['action']=='edit_room')
         }
 
         // Delete existing features and facilities
-        $del_features = delete("DELETE FROM `room_features` WHERE `room_id`=?", [$frm_data['room_id']], 'i');
-        $del_facilities = delete("DELETE FROM `room_facilities` WHERE `room_id`=?", [$frm_data['room_id']], 'i');
+        $del_features = delete("DELETE FROM 'phong_d_trung' WHERE 'phong_id'=?", [$frm_data['d_trung_id']], 'i');
+        $del_facilities = delete("DELETE FROM 'phong_tien_ich' WHERE 'phong_id'=?", [$frm_data['tien_ich_id']], 'i');
 
         if(!$del_features || !$del_facilities){
             $flag = false;
@@ -214,13 +214,13 @@ if(isset($_POST['action']) && $_POST['action']=='edit_room')
         }
 
         // Insert new features
-        $features = json_decode($_POST['features']);
-        $q2 = "INSERT INTO `room_features`(`room_id`,`features_id`) VALUES (?,?)";
+        $features = json_decode($_POST['d_trung']);
+        $q2 = "INSERT INTO 'phong_d_trung'('phong_id','d_trung_id') VALUES (?,?)";
 
         if(!empty($features)){
             $stmt = mysqli_prepare($GLOBALS['con'], $q2);
             foreach($features as $f){
-                mysqli_stmt_bind_param($stmt,'ii',$frm_data['room_id'],$f);
+                mysqli_stmt_bind_param($stmt,'ii',$frm_data['d_trung_id'],$f);
                 if(!mysqli_stmt_execute($stmt)){
                     $flag = false;
                     throw new Exception("Failed to insert features");
@@ -230,13 +230,13 @@ if(isset($_POST['action']) && $_POST['action']=='edit_room')
         }
 
         // Insert new facilities
-        $facilities = json_decode($_POST['facilities']);
-        $q3 = "INSERT INTO `room_facilities`(`room_id`,`facilities_id`) VALUES (?,?)";
+        $facilities = json_decode($_POST['tien_ich']);
+        $q3 = "INSERT INTO 'phong_tien_ich'('phong_id','tien_ich_id') VALUES (?,?)";
 
         if(!empty($facilities)){
             $stmt = mysqli_prepare($GLOBALS['con'], $q3);
             foreach($facilities as $f){
-                mysqli_stmt_bind_param($stmt,'ii',$frm_data['room_id'],$f);
+                mysqli_stmt_bind_param($stmt,'ii',$frm_data['phong_id'],$f);
                 if(!mysqli_stmt_execute($stmt)){
                     $flag = false;
                     throw new Exception("Failed to insert facilities");
@@ -263,7 +263,7 @@ if(isset($_POST['action']) && $_POST['action']=='edit_room')
 if (isset($_POST['toggle_status'])) {
     $frm_data = filteration($_POST);
 
-    $q = "UPDATE `rooms` SET `status`=? WHERE `id`=?";
+    $q = "UPDATE 'phong' SET 'tr_thai'=? WHERE 'id'=?";
     $v = [$frm_data['value'], $frm_data['toggle_status']];
 
     if(update($q, $v, 'ii')){
@@ -290,8 +290,8 @@ if(isset($_POST['add_image'])){
         echo $img_r;
     }
     else{
-        $q = "INSERT INTO `room_images`(`room_id`, `image`) VALUES (?,?)";
-        $values = [$frm_data['room_id'], $img_r];
+        $q = "INSERT INTO 'phong_image'('phong_id', 'image') VALUES (?,?)";
+        $values = [$frm_data['phong_id'], $img_r];
         $res = insert($q, $values, 'is');
         echo $res;
     }
@@ -301,7 +301,7 @@ if(isset($_POST['add_image'])){
 if(isset($_POST['get_room_images'])){
 
     $frm_data = filteration($_POST);
-    $res = select("SELECT * FROM `room_images` WHERE `room_id`=?",[$frm_data['get_room_images']],'i');
+    $res = select("SELECT * FROM phong_image WHERE phong_id=?", [$frm_data['get_room_images']], 'i');
 
     $path = ROOMS_IMG_PATH;
 
@@ -309,7 +309,7 @@ if(isset($_POST['get_room_images'])){
         if($row['thumb']==1){
             $thumb_btn = "<i class='bi bi-check-lg text-light bg-success px-2 py-1 rounded fs-5'></i>";
         }else{
-            $thumb_btn = "<button onclick='thumb_image($row[sr_no],$row[room_id])' class='btn btn-secondary shadow-none'>
+            $thumb_btn = "<button onclick='thumb_image($row[sr_no],$row[phong_id])' class='btn btn-secondary shadow-none'>
                     <i class='bi bi-check-lg'></i>
                     </button>";
         }
@@ -318,7 +318,7 @@ if(isset($_POST['get_room_images'])){
                 <td><img src='$path$row[image]' class='img-fluid'></td>
                 <td>$thumb_btn</td>
                 <td>
-                   <button onclick='rem_image($row[sr_no],$row[room_id])' class='btn btn-danger shadow-none'>
+                   <button onclick='rem_image($row[sr_no],$row[phong_id])' class='btn btn-danger shadow-none'>
                     <i class='bi bi-trash'></i>
                     </button>
                 </td>
@@ -334,12 +334,12 @@ if(isset($_POST['rem_image'])){
 
     // Debug logging
     error_log("Image ID: " . $frm_data['image_id']);
-    error_log("Room ID: " . $frm_data['room_id']);
+    error_log("Room ID: " . $frm_data['phong_id']);
 
-    $values = [$frm_data['image_id'],$frm_data['room_id']];
+    $values = [$frm_data['image_id'],$frm_data['phong_id']];
 
     // Check if image exists
-    $pre_q = "SELECT * FROM `room_images` WHERE `sr_no`=? AND `room_id`=?";
+    $pre_q = "SELECT * FROM 'phong_image' WHERE 'sr_no'=? AND 'phong_id'=?";
     $res = select($pre_q,$values,'ii');
 
     // Debug logging for query result
@@ -359,7 +359,7 @@ if(isset($_POST['rem_image'])){
     error_log("Attempting to delete image: " . $img['image']);
 
     if(deleteImage($img['image'], ROOMS_FOLDER)){
-        $q = "DELETE FROM `room_images` WHERE `sr_no`=? AND `room_id`=?";
+        $q = "DELETE FROM 'phong_image' WHERE 'sr_no'=? AND 'phong_id'=?";
         $res = delete($q,$values,'ii');
 
         // Debug logging for delete operation
@@ -377,12 +377,12 @@ if(isset($_POST['rem_image'])){
 if(isset($_POST['thumb_image'])){
     $frm_data = filteration($_POST);
 
-    $pre_q = "UPDATE `room_images` SET `thumb`=? WHERE `room_id`=?";
-    $pre_v = [0,$frm_data['room_id']];
+    $pre_q = "UPDATE 'phong_image' SET 'thumb'=? WHERE 'phong_id'=?";
+    $pre_v = [0,$frm_data['phong_id']];
     $pre_res = update($pre_q,$pre_v,'ii');
 
-    $q = "UPDATE `room_images` SET `thumb`=? WHERE `sr_no`=? AND `room_id`=?";
-    $v = [1,$frm_data['image_id'],$frm_data['room_id']];
+    $q = "UPDATE 'phong_image' SET 'thumb'=? WHERE 'sr_no'=? AND 'phong_id'=?";
+    $v = [1,$frm_data['image_id'],$frm_data['phong_id']];
     $res = update($q,$v,'iii');
 
     echo $res;
@@ -397,27 +397,27 @@ if(isset($_POST['remove_room']))
         mysqli_begin_transaction($GLOBALS['con']);
 
         // Lấy và xóa tất cả hình ảnh của phòng từ thư mục uploads
-        $res1 = select("SELECT * FROM `room_images` WHERE `room_id`=?",[$frm_data['room_id']],'i');
+        $res1 = select("SELECT * FROM 'phong_image' WHERE 'phong_id'=?",[$frm_data['phong_id']],'i');
 
         while($row = mysqli_fetch_assoc($res1)){
             deleteImage($row['image'],ROOMS_FOLDER);
         }
 
         // Xóa tất cả bản ghi hình ảnh của phòng trong database
-        $q1 = "DELETE FROM `room_images` WHERE `room_id`=?";
-        $res1 = delete($q1, [$frm_data['room_id']], 'i');
+        $q1 = "DELETE FROM 'phong_image' WHERE 'phong_id'=?";
+        $res1 = delete($q1, [$frm_data['phong_id']], 'i');
 
         // Xóa tất cả tiện nghi của phòng
-        $q2 = "DELETE FROM `room_facilities` WHERE `room_id`=?";
-        $res2 = delete($q2, [$frm_data['room_id']], 'i');
+        $q2 = "DELETE FROM 'phong_tien_ich' WHERE 'phong_id'=?";
+        $res2 = delete($q2, [$frm_data['phong_id']], 'i');
 
         // Xóa tất cả tính năng của phòng
-        $q3 = "DELETE FROM `room_features` WHERE `room_id`=?";
-        $res3 = delete($q3, [$frm_data['room_id']], 'i');
+        $q3 = "DELETE FROM 'phong_d_trung' WHERE 'phong_id'=?";
+        $res3 = delete($q3, [$frm_data['phong_id']], 'i');
 
         // Cuối cùng xóa thông tin phòng từ bảng chính
-        $q4 = "DELETE FROM `rooms` WHERE `id`=?";
-        $res4 = delete($q4, [$frm_data['room_id']], 'i');
+        $q4 = "DELETE FROM 'phong' WHERE 'id'=?";
+        $res4 = delete($q4, [$frm_data['phong_id']], 'i');
 
         // Nếu tất cả các thao tác trên thành công thì commit transaction
         mysqli_commit($GLOBALS['con']);
@@ -431,5 +431,6 @@ if(isset($_POST['remove_room']))
         echo 0; // Trả về 0 để thông báo xóa thất bại
     }
 }
+
 ?>
 

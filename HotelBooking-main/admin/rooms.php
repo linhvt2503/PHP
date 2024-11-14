@@ -15,56 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die('Invalid CSRF token');
     }
 
-    if (isset($_POST['seen_all'])) {
-        $q = "UPDATE `user_queries` SET `seen`=?";
-        $values = [1];
-        if (update($q, $values, 'i')) {
-            alert('success', 'Marked all as read');
-        } else {
-            alert('error', 'Operation Failed');
-        }
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
-    }
 
-    if (isset($_POST['seen_single'])) {
-        $sr_no = filter_var($_POST['sr_no'], FILTER_VALIDATE_INT);
-        if ($sr_no) {
-            $q = "UPDATE `user_queries` SET `seen`=? WHERE `sr_no`=?";
-            $values = [1, $sr_no];
-            if (update($q, $values, 'ii')) {
-                alert('success', 'Marked as read');
-            } else {
-                alert('error', 'Operation Failed');
-            }
-        }
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
-    }
-
-    if (isset($_POST['delete_all'])) {
-        $stmt = mysqli_prepare($GLOBALS['con'], "DELETE FROM `user_queries`");
-        if (mysqli_stmt_execute($stmt)) {
-            alert('success', 'Đã xóa tất cả');
-        } else {
-            alert('error', 'Xóa thất bại');
-        }
-        mysqli_stmt_close($stmt);
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
-    }
-
-    if (isset($_POST['delete_single'])) {
-        $sr_no = filter_var($_POST['sr_no'], FILTER_VALIDATE_INT);
-        if ($sr_no) {
-            $q = "DELETE FROM `user_queries` WHERE `sr_no`=?";
-            $values = [$sr_no];
-            if (delete($q, $values, 'i')) {
-                alert('success', 'Đã xóa');
-            } else {
-                alert('error', 'Xóa thất bại');
-            }
-        }
         header("Location: " . $_SERVER['PHP_SELF']);
         exit;
     }
@@ -81,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         error_log("Received POST data: " . print_r($_POST, true));
 
         // Validate required fields
-        $required_fields = ['name', 'area', 'price', 'quantity', 'adult', 'children', 'desc'];
+        $required_fields = ['name', 'area', 'price', 'soluong', 'adult', 'children', 'mo_ta'];
         foreach ($required_fields as $field) {
             if (!isset($_POST[$field]) || empty($_POST[$field])) {
                 error_log("Missing required field: $field");
@@ -93,13 +44,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $name = mysqli_real_escape_string($GLOBALS['con'], $_POST['name']);
         $area = filter_var($_POST['area'], FILTER_VALIDATE_INT);
         $price = filter_var($_POST['price'], FILTER_VALIDATE_INT);
-        $quantity = filter_var($_POST['quantity'], FILTER_VALIDATE_INT);
+        $quantity = filter_var($_POST['soluong'], FILTER_VALIDATE_INT);
         $adult = filter_var($_POST['adult'], FILTER_VALIDATE_INT);
         $children = filter_var($_POST['children'], FILTER_VALIDATE_INT);
-        $desc = mysqli_real_escape_string($GLOBALS['con'], $_POST['desc']);
+        $desc = mysqli_real_escape_string($GLOBALS['con'], $_POST['mo_ta']);
 
-        $features = json_decode($_POST['features']);
-        $facilities = json_decode($_POST['facilities']);
+        $features = json_decode($_POST['d_trung']);
+        $facilities = json_decode($_POST['ten_ich']);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             echo 0;
@@ -111,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         }
 
-        $q = "INSERT INTO `rooms`(`name`, `area`, `price`, `quantity`, `adult`, `children`, `description`) 
+        $q = "INSERT INTO 'phong'('name', 'area', 'price', 'soluong', 'adult', 'children', 'mo_ta') 
               VALUES (?,?,?,?,?,?,?)";
         $values = [$name, $area, $price, $quantity, $adult, $children, $desc];
 
@@ -119,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $room_id = $GLOBALS['con']->insert_id;
 
             // Insert features
-            $q_feature = "INSERT INTO `room_features`(`room_id`, `features_id`) VALUES (?,?)";
+            $q_feature = "INSERT INTO 'phong_d_trung'('phong_id', 'd_trung_id') VALUES (?,?)";
             foreach ($features as $f) {
                 $f = filter_var($f, FILTER_VALIDATE_INT);
                 if ($f) {
@@ -129,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             // Insert facilities
-            $q_facility = "INSERT INTO `room_facilities`(`room_id`, `facilities_id`) VALUES (?,?)";
+            $q_facility = "INSERT INTO 'phong_d_trung'('phong_id', 'd_trung_id') VALUES (?,?)";
             foreach ($facilities as $f) {
                 $f = filter_var($f, FILTER_VALIDATE_INT);
                 if ($f) {
@@ -137,13 +88,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     insert($q_facility, $values, 'ii');
                 }
             }
-
             echo 1;
         } else {
             echo 0;
         }
         exit;
-    }
+
 }
 ?>
 
@@ -179,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <tr class="bg-dark text-light">
                                 <th scope="col">#</th>
                                 <th scope="col">Tên</th>
-                                <th scope="col">Khu vực</th>
+                                <th scope="col">Diện tích</th>
                                 <th scope="col">Khách</th>
                                 <th scope="col">Giá tiền</th>
                                 <th scope="col">Số lượng</th>
@@ -215,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <input type="text" id="name" name="name" class="form-control shadow-none" autocomplete="name" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold" for="area">Khu vực</label>
+                            <label class="form-label fw-bold" for="area">Diện tích</label>
                             <input type="number" min="1" id="area" name="area" class="form-control shadow-none" autocomplete="area" required>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -223,8 +173,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <input type="number" min="1" id="price" name="price" class="form-control shadow-none" autocomplete="price" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold" for="quantity">Số lượng</label>
-                            <input type="number" min="1" id="quantity" name="quantity" class="form-control shadow-none" autocomplete="quantity" required>
+                            <label class="form-label fw-bold" for="soluong">Số lượng</label>
+                            <input type="number" min="1" id="soluong" name="soluong" class="form-control shadow-none" autocomplete="soluong" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold" for="adult">Người lớn (Max.)</label>
@@ -239,13 +189,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <label class="form-label fw-bold">Đặc trưng</label>
                         <div class="row">
                             <?php
-                            $res = selectAll('features');
+                            $res = selectAll('d_trung');
                             while($opt = mysqli_fetch_assoc($res)){
                                 echo "
                                         <div class='col-md-3 mb-1'>
                                             <label>
-                                                <input type='checkbox' name='features' value='$opt[id]' class='form-check-input shadow-none'>
-                                                $opt[name]
+                                                <input type='checkbox' name='d_trung' value='$opt[id]' class='form-check-input shadow-none'>
+                                                $opt[ten]
                                             </label>
                                         </div>
                                         ";
@@ -257,13 +207,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <label class="form-label fw-bold">Tiện ích</label>
                         <div class="row">
                             <?php
-                            $res = selectAll('facilities');
+                            $res = selectAll('tien_ich');
                             while($opt = mysqli_fetch_assoc($res)){
                                 echo "
                                         <div class='col-md-3 mb-1'>
                                             <label>
-                                                <input type='checkbox' name='facilities' value='$opt[id]' class='form-check-input shadow-none'>
-                                                $opt[name]
+                                                <input type='checkbox' name='tien_ich' value='$opt[id]' class='form-check-input shadow-none'>
+                                                $opt[ten]
                                             </label>
                                         </div>
                                         ";
@@ -272,8 +222,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                     </div>
                     <div class="col-12 mb-3">
-                        <label class="form-label fw-bold" for="description">Description</label>
-                        <textarea id="desc" name="desc" rows="4" class="form-control shadow-none" autocomplete="desc" required></textarea>
+                        <label class="form-label fw-bold" for="mo_ta">Description</label>
+                        <textarea id="mo_ta" name="mo_ta" rows="4" class="form-control shadow-none" autocomplete="mo_ta" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -304,7 +254,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <input type="text" name="name" id="edit_name" class="form-control shadow-none" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Khu vực</label>
+                            <label class="form-label fw-bold">Diện tích</label>
                             <input type="number" min="1" name="area" id="edit_area" class="form-control shadow-none" required>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -313,7 +263,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Số lượng</label>
-                            <input type="number" min="1" name="quantity" id="edit_quantity" class="form-control shadow-none" required>
+                            <input type="number" min="1" name="soluong" id="edit_quantity" class="form-control shadow-none" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Người lớn (Max.)</label>
@@ -329,13 +279,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="row" id="edit_features">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             <?php
-                            $res = selectAll('features');
+                            $res = selectAll('d_trung');
                             while($opt = mysqli_fetch_assoc($res)){
                                 echo "
                                     <div class='col-md-3 mb-1'>
                                         <label>
-                                            <input type='checkbox' name='features' value='$opt[id]' class='form-check-input shadow-none'>
-                                            $opt[name]
+                                            <input type='checkbox' name='d_trung' value='$opt[id]' class='form-check-input shadow-none'>
+                                            $opt[ten]
                                         </label>
                                     </div>
                                 ";
@@ -348,13 +298,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="row" id="edit_facilities">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             <?php
-                            $res = selectAll('facilities');
+                            $res = selectAll('tien_ich');
                             while($opt = mysqli_fetch_assoc($res)){
                                 echo "
                                     <div class='col-md-3 mb-1'>
                                         <label>
-                                            <input type='checkbox' name='facilities' value='$opt[id]' class='form-check-input shadow-none'>
-                                            $opt[name]
+                                            <input type='checkbox' name='tien_ich' value='$opt[id]' class='form-check-input shadow-none'>
+                                            $opt[ten]
                                         </label>
                                     </div>
                                 ";
@@ -364,7 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                     <div class="col-12 mb-3">
                         <label class="form-label fw-bold">Mô tả</label>
-                        <textarea name="desc" id="edit_desc" rows="4" class="form-control shadow-none" required></textarea>
+                        <textarea name="mo_ta" id="edit_desc" rows="4" class="form-control shadow-none" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -375,6 +325,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
     </div>
 </div>
+
+
 
 <!-- Manage room iamges modal -->
 <div class="modal fade" id="room-images" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -391,7 +343,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <label class="form-label fw-bold">Add Image</label>
                         <input type="file" name="image" accept=".jpg, .png, .webp, .jpeg, .jfif" class="form-control shadow-none mb-3" required>
                         <button  class="btn custom-bg text-white shadow-none">Add</button>
-                        <input type="hidden" name="room_id">
+                        <input type="hidden" name="phong_id">
                     </form>
                 </div>
                 <div class="table-responsive-lg" style="height: 350px; overflow-y: scroll;">
@@ -442,7 +394,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         data.append('action', 'add_room');
 
         // Validate required fields
-        const requiredFields = ['name', 'area', 'price', 'quantity', 'adult', 'children', 'desc'];
+        const requiredFields = ['name', 'area', 'price', 'soluong', 'adult', 'children', 'mo_ta'];
         for (let field of requiredFields) {
             if (!data.get(field)) {
                 alert('error', `Please fill in the ${field} field`);
@@ -451,7 +403,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // Validate numeric fields
-        const numericFields = ['area', 'price', 'quantity', 'adult', 'children'];
+        const numericFields = ['area', 'price', 'soluong', 'adult', 'children'];
         for (let field of numericFields) {
             if (isNaN(data.get(field)) || data.get(field) <= 0) {
                 alert('error', `${field} must be a positive number`);
@@ -462,16 +414,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         let features = [];
         let facilities = [];
 
-        document.querySelectorAll('input[name="features"]:checked').forEach(el => {
+        document.querySelectorAll('input[name="d_trung"]:checked').forEach(el => {
             features.push(el.value);
         });
 
-        document.querySelectorAll('input[name="facilities"]:checked').forEach(el => {
+        document.querySelectorAll('input[name="tien_ich"]:checked').forEach(el => {
             facilities.push(el.value);
         });
 
-        data.append('features', JSON.stringify(features));
-        data.append('facilities', JSON.stringify(facilities));
+        data.append('d_trung', JSON.stringify(features));
+        data.append('tien_ich', JSON.stringify(facilities));
 
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "ajax/rooms.php", true);
@@ -603,8 +555,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         });
 
         // Add to form data
-        data.append('features', JSON.stringify(features));
-        data.append('facilities', JSON.stringify(facilities));
+        data.append('d_trung', JSON.stringify(features));
+        data.append('tien_ich', JSON.stringify(facilities));
         data.append('action', 'edit_room');
 
         let xhr = new XMLHttpRequest();
@@ -669,7 +621,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     function add_image(){
         let data = new FormData();
         data.append('image',add_image_form.elements['image'].files[0]);
-        data.append('room_id',add_image_form.elements['room_id'].value);
+        data.append('phong_id',add_image_form.elements['phong_id'].value);
         data.append('add_image','');
 
         let xhr = new XMLHttpRequest();
@@ -689,7 +641,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             else{
                 alert('success','Ảnh đã thêm thành công!','image-alert');
-                room_images(add_image_form.elements['room_id'].value,document.querySelector("#room-images .modal-title").innerText);
+                room_images(add_image_form.elements['phong_id'].value,document.querySelector("#room-images .modal-title").innerText);
                 add_image_form.reset();
             }
         }
@@ -699,7 +651,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     function room_images(id,rname){
         document.querySelector("#room-images .modal-title").innerText = rname;
-        add_image_form.elements['room_id'].value=id;
+        add_image_form.elements['phong_id'].value=id;
         add_image_form.elements['image'].value= '';
 
         let xhr = new XMLHttpRequest();
@@ -714,10 +666,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     <!--Remove Images room-->
-    function rem_image(img_id,room_id){
+    function rem_image(img_id,phong_id){
         let data = new FormData();
         data.append('image_id',img_id);
-        data.append('room_id',room_id);
+        data.append('phong_id',room_id);
         data.append('rem_image','');
 
         let xhr = new XMLHttpRequest();
@@ -743,7 +695,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     function thumb_image(img_id,room_id){
         let data = new FormData();
         data.append('image_id',img_id);
-        data.append('room_id',room_id);
+        data.append('phong_id',room_id);
         data.append('thumb_image','');
 
         let xhr = new XMLHttpRequest();
@@ -769,7 +721,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     function remove_room(room_id){
         if(confirm("Bạn có chắc chắn sẽ xóa chứ?")){
             let data = new FormData();
-            data.append('room_id',room_id);
+            data.append('phong_id',room_id);
             data.append('remove_room','');
 
             let xhr = new XMLHttpRequest();
@@ -793,7 +745,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     window.onload = function (){
         get_all_rooms();
     }
-
 </script>
 </body>
 </html>

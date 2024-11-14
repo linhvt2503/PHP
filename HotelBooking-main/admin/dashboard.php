@@ -18,18 +18,7 @@ adminLogin();
 <?php
 
     require('inc/header.php');
-    $is_shutdown = mysqli_fetch_assoc(mysqli_query($con,"SELECT `shutdown` FROM `settings`"));
 
-//    $current_booking = mysqli_fetch_assoc(mysqli_query($con,"SELECT
-//        COUNT(CASE WHEN booking_status='booked' AND arrival=0 THEN 1 END) AS `new_bookings`,
-//        COUNT(CASE WHEN booking_status='cancelled' AND refund=0 THEN 1 END) AS `refund_bookings`,
-//        FROM `booking_order`"));
-
-    $unread_queries = mysqli_fetch_assoc(mysqli_query($con,"SELECT COUNT(sr_no) AS `count` 
-        FROM `user_queries` WHERE `seen`=0"));
-
-//    $unread_reviews = mysqli_fetch_assoc(mysqli_query($con,"SELECT COUNT(sr_no) AS `count`
-//        FROM `rating_review` WHERE `seen`=0"));
 ?>
 
 <div class="container-fluid" id="main-content">
@@ -59,22 +48,7 @@ adminLogin();
                         </div>
                     </a>
                 </div>
-                <div class="col-md-3 mb-4">
-                    <a href="user_queries.php" class="text-decoration-none">
-                        <div class="card text-center text-info p3">
-                            <h6>User Booking</h6>
-                            <h1 class="mt-2 mb-0">4</h1>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <a href="rate_review.php" class="text-decoration-none">
-                        <div class="card text-center text-info p3">
-                            <h6>Rating & Review</h6>
-                            <h1 class="mt-2 mb-0">4</h1>
-                        </div>
-                    </a>
-                </div>
+
             </div>
 
 
